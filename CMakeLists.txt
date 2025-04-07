@@ -4,6 +4,8 @@ project(ServerProject)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+
 include_directories(src)
 
 include(FetchContent)
@@ -22,5 +24,9 @@ add_executable(server ${SOURCES})
 target_link_libraries(server PRIVATE nlohmann_json::nlohmann_json)
 
 if(WIN32)
-    target_link_libraries(server ws2_32)
+    target_link_libraries(server PRIVATE ws2_32)
+endif()
+
+if(MINGW)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 endif()
