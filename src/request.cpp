@@ -3,8 +3,7 @@
 #include <regex>
 
 Request::Request(const int client_fd) : client_fd(client_fd) {
-    char buffer[2048];
-    std::memset(buffer, 0, sizeof(buffer));
+    char buffer[2048] = {};
 #ifdef _WIN32
     ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_received < 0) {
@@ -16,7 +15,7 @@ Request::Request(const int client_fd) : client_fd(client_fd) {
     ssize_t bytes_received = read(client_fd, buffer, sizeof(buffer) - 1);
     if (bytes_received < 0) {
         std::cerr << "Error reading from client, bytes_received = " << bytes_received
-                  << ", error: " << std::strerror(errno) << std::endl;
+            << ", error: " << std::strerror(errno) << std::endl;
         return;
     }
 #endif
@@ -24,18 +23,18 @@ Request::Request(const int client_fd) : client_fd(client_fd) {
     rawRequest = std::string(buffer);
 
     // Parse the request line "METHOD PATH HTTP/1.1"
-    size_t pos = rawRequest.find("\r\n");
+    const size_t pos = rawRequest.find("\r\n");
     if (pos != std::string::npos) {
         std::string requestLine = rawRequest.substr(0, pos);
-        size_t pos1 = requestLine.find(' ');
-        size_t pos2 = requestLine.find(' ', pos1 + 1);
+        const size_t pos1 = requestLine.find(' ');
+        const size_t pos2 = requestLine.find(' ', pos1 + 1);
         if (pos1 != std::string::npos && pos2 != std::string::npos) {
-            std::string methodStr = requestLine.substr(0, pos1);
+            const std::string methodStr = requestLine.substr(0, pos1);
             method = parseMethod(methodStr);
 
             // Get full route url and separate query from path
             const std::string url = requestLine.substr(pos1 + 1, pos2 - pos1 - 1);
-            size_t queryStart = url.find('?');
+            const size_t queryStart = url.find('?');
             path = url.substr(0, queryStart);
 
             if (queryStart != std::string::npos)
@@ -50,11 +49,11 @@ Request::Request(const int client_fd) : client_fd(client_fd) {
     // Parse headers until an empty line is reached
     size_t headerStart = pos + 2; // After "\r\n"
     while (true) {
-        size_t headerEnd = rawRequest.find("\r\n", headerStart);
+        const size_t headerEnd = rawRequest.find("\r\n", headerStart);
         if (headerEnd == std::string::npos || headerEnd == headerStart)
             break;
         std::string headerLine = rawRequest.substr(headerStart, headerEnd - headerStart);
-        size_t colonPos = headerLine.find(':');
+        const size_t colonPos = headerLine.find(':');
         if (colonPos != std::string::npos) {
             std::string key = headerLine.substr(0, colonPos);
             size_t valueStart = colonPos + 1;
@@ -136,10 +135,10 @@ void Request::parseQueryParams(const std::string& query) {
 
         std::regex del2(",");
         std::sregex_token_iterator it2(value.begin(), value.end(), del2, -1);
-        std::sregex_token_iterator end;
+        std::sregex_token_iterator end2;
 
-        std::vector<std::string> parsedValues = std::vector<std::string>();
-        while (it2 != end) {
+        auto parsedValues = std::vector<std::string>();
+        while (it2 != end2) {
             parsedValues.push_back(*it2);
             ++it2;
         }

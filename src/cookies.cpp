@@ -10,7 +10,7 @@ Cookies::Cookies(const std::string& cookieHeader) {
 bool Cookies::hasCookie(const std::string& key) const { return cookies.contains(key); }
 
 
-int Cookies::size() const { return cookies.size(); }
+unsigned long Cookies::size() const { return cookies.size(); }
 
 
 std::string Cookies::getCookie(const std::string& key) { return cookies[key]; }
@@ -21,7 +21,7 @@ void Cookies::setCookie(const std::string& key, const std::string& value) { cook
 
 std::string Cookies::toHeader() {
     std::string out;
-    for (auto [key, value] : cookies) {
+    for (const auto& [key, value] : cookies) {
         out += key + "=" + value + "; ";
     }
     return out.substr(0, out.size() - 3);

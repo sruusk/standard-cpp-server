@@ -1,6 +1,6 @@
 #include "server.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     int port = 3000;
     std::string publicDir = "public";
     if (argc > 1)

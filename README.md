@@ -34,6 +34,7 @@ using only standard C++ libraries and
 ### Prerequisites
 - A C++ 23 compliant compiler.
 - CMake version 3.10 or later.
+- For Windows targets, G++ version 14 or later.
 - An Internet connection (needed to fetch dependencies).
 
 ### Building with CMake

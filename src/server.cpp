@@ -51,7 +51,7 @@ Server::Server(const int port, const string& publicDir) : port(port) {
     // The key in publicFiles is the route (e.g. "/index.html") and the value is the file's full path.
     if (fs::exists(publicDir) && fs::is_directory(publicDir)) {
         std::cout << "Using public directory " << publicDir << std::endl;
-        for (const auto & entry : fs::recursive_directory_iterator(publicDir)) {
+        for (const auto& entry : fs::recursive_directory_iterator(publicDir)) {
             if (fs::is_regular_file(entry.path())) {
                 // Get the path relative to the public folder.
                 fs::path relativePath = fs::relative(entry.path(), publicDir);
@@ -64,7 +64,8 @@ Server::Server(const int port, const string& publicDir) : port(port) {
                     if (relativePath.parent_path().empty()) {
                         // In the root folder, map "/" to index.html.
                         publicFiles["/"] = entry.path().string();
-                    } else {
+                    }
+                    else {
                         // In a subdirectory, map the directory route (e.g. /dir) to index.html.
                         std::string dirRoute = "/" + relativePath.parent_path().generic_string();
                         publicFiles[dirRoute] = entry.path().string();
@@ -72,9 +73,9 @@ Server::Server(const int port, const string& publicDir) : port(port) {
                 }
             }
         }
-    } else if (fs::create_directory(publicDir))
+    }
+    else if (fs::create_directory(publicDir))
         std::cout << "Created public dir " << publicDir << std::endl;
-
 }
 
 void Server::registerRoute(const Method& method, const string& route, const RouteHandler& handler) {
@@ -105,7 +106,8 @@ void Server::processRequest(const int client_fd) {
             std::cout << "200 " << req.getMethod() << " " << req.getPath() << "\n";
 #endif
             req.respond(ResponseCode::OK, new Headers(), content, Utils::getMimeType(publicFiles[req.getPath()]));
-        } else {
+        }
+        else {
             req.respond(ResponseCode::InternalServerError);
         }
     }
