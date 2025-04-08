@@ -1,6 +1,6 @@
 #include "server.h"
 
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     int port = 3000;
     std::string publicDir = "public";
     if (argc > 1)
@@ -11,10 +11,17 @@ int main(int argc, char* argv[]) {
 
     Server server = Server(port, publicDir);
 
-    const RouteHandler hello = [](Request req) {
-        req.respond(ResponseCode::OK, new Headers(), "<h2>Hello World!</h2>", MimeType::HTML);
-    };
-    server.registerRoute(Method::GET, "/hello", hello);
+    server.registerRoute(Method::GET, "/hello", [](Request req) {
+        req.respond(ResponseCode::OK, "<h2>Hello World!</h2>", new Headers(), MimeType::HTML);
+    });
+
+    server.registerRoute(Method::POST, "/json", [](Request req) {
+        const json json = req.parseBodyJSON();
+        if (json == nullptr) return;
+
+        std::cout << json << std::endl;
+        req.respond(ResponseCode::OK, json);
+    });
 
     server.run();
 

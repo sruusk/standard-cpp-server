@@ -95,8 +95,8 @@ Request::Request(const int client_fd) : client_fd(client_fd) {
 }
 
 void Request::respond(const ResponseCode responseCode,
-                      Headers* headers,
                       const std::string& content,
+                      Headers* headers,
                       const MimeType mimeType) {
     // Set set-cookie header
     if (responseCookies.size() > 0)
@@ -120,6 +120,10 @@ void Request::respond(const ResponseCode responseCode,
     shutdown(client_fd, SHUT_RD);
     close(client_fd);
 #endif
+}
+
+void Request::respond(const ResponseCode responseCode, const json& content, Headers* headers) {
+    respond(responseCode, content.dump(), headers, MimeType::JSON);
 }
 
 void Request::parseQueryParams(const std::string& query) {
@@ -230,9 +234,20 @@ void Request::setCookie(const std::string& key, const std::string& value) {
     responseCookies.setCookie(key, value);
 }
 
+/**
+ * Parses the request body to json.
+ * Returns a nullptr and sends a 400 response if the body cannot be parsed.
+ */
 json Request::parseBodyJSON() {
     const std::string contentType = requestHeaders.getHeader("Content-Type");
     if (contentType != "application/json")
         std::cerr << "Invalid Content-Type for JSON: " << contentType << " at " << path << "\n";
-    return json::parse(body);
+    try {
+        const auto json = json::parse(body);
+        return json;
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        respond(ResponseCode::BadRequest);
+        return nullptr;
+    }
 }

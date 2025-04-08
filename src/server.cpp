@@ -105,7 +105,7 @@ void Server::processRequest(const int client_fd) {
 #ifdef DEBUG
             std::cout << "200 " << req.getMethod() << " " << req.getPath() << "\n";
 #endif
-            req.respond(ResponseCode::OK, new Headers(), content, Utils::getMimeType(publicFiles[req.getPath()]));
+            req.respond(ResponseCode::OK, content, new Headers(), Utils::getMimeType(publicFiles[req.getPath()]));
         }
         else {
             req.respond(ResponseCode::InternalServerError);

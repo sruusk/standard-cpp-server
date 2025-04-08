@@ -65,6 +65,7 @@ inline std::ostream& operator<<(std::ostream& os, const Method& method) {
 
 enum class ResponseCode {
     OK = 200,
+    BadRequest = 400,
     NotFound = 404,
     InternalServerError = 500,
 };
@@ -74,9 +75,14 @@ public:
     explicit Request(int client_fd);
 
     void respond(ResponseCode responseCode,
-                 Headers* headers = new Headers(),
                  const std::string& content = "",
+                 Headers* headers = new Headers(),
                  MimeType mimeType = MimeType::TXT);
+
+    void respond(ResponseCode responseCode,
+                 const json& content,
+                 Headers* headers = new Headers());
+
 
     bool hasQuery(const std::string& key) const;
 
