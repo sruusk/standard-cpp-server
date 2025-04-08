@@ -130,7 +130,7 @@ void Request::parseQueryParams(const std::string& query) {
 
     while (it != end) {
         const std::string param = *it;
-        const std::string key = param.substr(0, param.find('='));
+        const std::string key = Utils::urlDecode(param.substr(0, param.find('=')));
         const std::string value = param.substr(param.find('=') + 1);
 
         std::regex del2(",");
@@ -139,7 +139,7 @@ void Request::parseQueryParams(const std::string& query) {
 
         auto parsedValues = std::vector<std::string>();
         while (it2 != end2) {
-            parsedValues.push_back(*it2);
+            parsedValues.push_back(Utils::urlDecode(*it2));
             ++it2;
         }
 
@@ -231,7 +231,8 @@ void Request::setCookie(const std::string& key, const std::string& value) {
 }
 
 json Request::parseBodyJSON() {
-    if (requestHeaders.getHeader("Content-Type") != "application/json")
-        std::cerr << "Invalid Content-Type for JSON\n";
+    const std::string contentType = requestHeaders.getHeader("Content-Type");
+    if (contentType != "application/json")
+        std::cerr << "Invalid Content-Type for JSON: " << contentType << " at " << path << "\n";
     return json::parse(body);
 }

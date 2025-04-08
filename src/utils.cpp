@@ -5,6 +5,40 @@ std::string Utils::toLowerCase(std::string s) {
     return s;
 }
 
+std::string Utils::urlEncode(const std::string& s) {
+    std::ostringstream encoded;
+    for (const char c : s) {
+        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            encoded << c;
+        } else {
+            encoded << '%' << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(c));
+        }
+    }
+    return encoded.str();
+}
+
+std::string Utils::urlDecode(const std::string& s) {
+    std::ostringstream decoded;
+    for (size_t i = 0; i < s.length(); i++) {
+        if (s[i] == '%') {
+            if (i + 2 < s.length()) {
+                int value;
+                std::istringstream is(s.substr(i + 1, 2));
+                if (is >> std::hex >> value)
+                    decoded << static_cast<char>(value);
+                i += 2;
+            }
+        }
+        else if (s[i] == '+') {
+            decoded << ' ';
+        }
+        else {
+            decoded << s[i];
+        }
+    }
+    return decoded.str();
+}
+
 MimeType Utils::getMimeType(const std::string& filename) {
     const auto pos = filename.rfind('.');
     if (pos == std::string::npos)
