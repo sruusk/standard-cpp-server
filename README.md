@@ -3,8 +3,7 @@
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
 
 Standard C++ HTTP Server is a lightweight, multithreaded HTTP server built 
-using only standard C++ libraries and 
-[nlohmann/json](https://github.com/nlohmann/json) for JSON support.
+using minimal libraries.
 
 ## Table of Contents
 - [Features](#features)
@@ -34,7 +33,7 @@ using only standard C++ libraries and
 ### Prerequisites
 - A C++ 23 compliant compiler.
 - CMake version 3.10 or later.
-- For Windows targets, G++ version 14 or later.
+- For Windows targets, g++ version 14 or later.
 - An Internet connection (needed to fetch dependencies).
 
 ### Building with CMake
@@ -70,3 +69,4 @@ Place your static files inside the `/public` directory. The server automatically
 ## Dependencies
 - C++ 23 Standard Library.
 - [nlohmann/json](https://github.com/nlohmann/json) for JSON parsing.
+- OpenSSL
